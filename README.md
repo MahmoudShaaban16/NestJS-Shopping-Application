@@ -2,6 +2,9 @@
 
 ## Description
 
+ A Shopping application built using Nest.JS
+
+ Nest.JS is a server side framework that allows to build scalable Node.js Applications.
 
 
 ## Installation

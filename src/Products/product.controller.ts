@@ -1,10 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, Res } from "@nestjs/common";
 import { AddProductDTO } from "./addProductDTO";
 import { Product } from "./product";
-
+import {Response,Request} from 'express';
+import { ProductService } from "./product.service";
+import { ProductsService } from "./products.service";
 @Controller('products')
 export class ProductController {
 
+    constructor(private productsService:ProductsService){
+
+    }
+   
     products: Product[] = [
         { id: 1, name: 'Lenovo laptop', price: 8000, category: 'laptops', description: ' lenvo ideapad i5' },
         { id: 2, name: 'Mackbook air 2018', price: 22000, category: 'laptops', description: ' Mackbook air, 13 inch, 128 SSD' },
@@ -15,7 +21,6 @@ export class ProductController {
         { id: 7, name: 'Classic Nescafee', price: 8000, category: 'food', description: ' classic nescafee' },
         { id: 8, name: 'El ymni coffee', price: 18, category: 'food', description: ' coffee' },
         { id: 9, name: 'Orange', price: 20, category: 'food', description: '.5KG orange' }]
- 
     @Post()
     Add(@Body("name") name:string,@Body("price") price:number, @Body("category") category:string, @Body("description") description:string){
 
@@ -26,11 +31,18 @@ export class ProductController {
 
     @Post("AddV2")
     AddV2(@Body() newProduct:AddProductDTO){
-        let product:Product;
-        product=Object.assign({},{id:11},newProduct);
-        this.products.push(product);
-        return product;
+       
+       return this.productsService.add(newProduct);
 
+    }
+
+    @Post("AddWithRequest")
+    AddV3(@Req() request:Request, @Res() response:Response){
+        let product:Product;
+        
+        product=Object.assign({},{id:12},request.body);
+        this.products.push(product);
+        response.status(200).json(product);
     }
 
     @Put("/:id")
@@ -66,4 +78,6 @@ export class ProductController {
     Filter(@Query("category") productCategory: string): Product[] {
         return this.products.filter(p => p.category == productCategory);
     }
+
+    
 }
